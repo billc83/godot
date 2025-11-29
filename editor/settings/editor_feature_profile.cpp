@@ -330,11 +330,35 @@ void EditorFeatureProfileManager::_notification(int p_what) {
 			current_profile = EDITOR_GET("_default_feature_profile");
 			if (!current_profile.is_empty()) {
 				current.instantiate();
-				Error err = current->load_from_file(EditorPaths::get_singleton()->get_feature_profiles_dir().path_join(current_profile + ".profile"));
-				if (err != OK) {
-					ERR_PRINT("Error loading default feature profile: " + current_profile);
-					current_profile = String();
-					current.unref();
+				// -------------------------------------------------------
+				// COBRA2D HARD-CODED PROFILE
+				// -------------------------------------------------------
+				if (current_profile == "Cobra2D") {
+					// Disable 3D related features
+					current->set_disable_feature(EditorFeatureProfile::FEATURE_3D, true);
+					current->set_disable_class("Node3D", true);
+					current->set_disable_class("Mesh", true);
+					current->set_disable_class("World3D", true);
+					current->set_disable_class("Occluder3D", true);
+					current->set_disable_class("Curve3D", true);
+					// Disable asset library (optional)
+					current->set_disable_feature(EditorFeatureProfile::FEATURE_ASSET_LIB, true);
+					// Do NOT try to load a .profile file
+					// We fully configure Cobra2D in code
+				}
+				// -------------------------------------------------------
+				// DEFAULT BEHAVIOR FOR ALL OTHER PROFILES
+				// -------------------------------------------------------
+				else {
+					Error err = current->load_from_file(
+						EditorPaths::get_singleton()->get_feature_profiles_dir()
+						.path_join(current_profile + ".profile")
+					);
+					if (err != OK) {
+						ERR_PRINT("Error loading default feature profile: " + current_profile);
+						current_profile = String();
+						current.unref();
+					}
 				}
 			}
 			_update_profile_list(current_profile);
