@@ -1063,7 +1063,7 @@ EditorFeatureProfileManager::EditorFeatureProfileManager() {
 
 	set_title(TTR("Manage Editor Feature Profiles"));
 	set_flag(FLAG_MAXIMIZE_DISABLED, false);
-	EDITOR_DEF("_default_feature_profile", "");
+	EDITOR_DEF("_default_feature_profile", "Cobra2D");
 
 	update_timer = memnew(Timer);
 	update_timer->set_wait_time(1); //wait a second before updating editor
