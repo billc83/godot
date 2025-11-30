@@ -1,9 +1,9 @@
-short_name = "Cobra2D"
-name = "Cobra2D Game Engine"
+short_name = "godot"
+name = "Godot Engine"
 major = 0
 minor = 1
 patch = 0
 status = "dev"
 module_config = ""
-website = "starboardbowgames.com"
+website = "https://godotengine.org"
 docs = "latest"
