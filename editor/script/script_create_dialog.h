@@ -97,6 +97,7 @@ class ScriptCreateDialog : public ConfirmationDialog {
 	void _language_changed(int l = 0);
 	void _built_in_pressed();
 	void _use_template_pressed();
+
 	bool _validate_parent(const String &p_string);
 	String _validate_path(const String &p_path, bool p_file_must_exist, bool *r_path_valid = nullptr);
 	void _parent_name_changed(const String &p_parent);

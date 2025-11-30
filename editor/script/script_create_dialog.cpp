@@ -188,7 +188,10 @@ String ScriptCreateDialog::_adjust_file_path(const String &p_base_path) const {
 	String base_dir = p_base_path.get_base_dir();
 	String file_name = p_base_path.get_file().get_basename();
 	file_name = EditorNode::adjust_script_name_casing(file_name, language->preferred_file_name_casing());
-	String extension = language->get_extension();
+
+	// COBRA2D: default to .cobra for new scripts (gd still allowed manually)
+	String extension = "cobra";
+
 	return base_dir.path_join(file_name + "." + extension);
 }
 
@@ -231,6 +234,9 @@ bool ScriptCreateDialog::_validate_parent(const String &p_string) {
 }
 
 String ScriptCreateDialog::_validate_path(const String &p_path, bool p_file_must_exist, bool *r_path_valid) {
+	print_line("========== COBRA2D DEBUG START ==========");
+    print_line("Validating path: " + p_path);
+	
 	String p = p_path.strip_edges();
 	if (r_path_valid) {
 		*r_path_valid = false;
@@ -284,17 +290,31 @@ String ScriptCreateDialog::_validate_path(const String &p_path, bool p_file_must
 	for (int l = 0; l < language_menu->get_item_count(); l++) {
 		ScriptServer::get_language(l)->get_recognized_extensions(&extensions);
 	}
+	// COBRA2D DEBUG - Print what we got
+	print_line("COBRA2D DEBUG: Checking extension: " + extension);
+	print_line("COBRA2D DEBUG: All extensions count: " + itos(extensions.size()));
+	for (const String &E : extensions) {
+    	print_line("COBRA2D DEBUG: Found extension: " + E);
+	}
 
 	bool found = false;
 	bool match = false;
+	// COBRA2D Get the selected language's recognized extensions
+	List<String> selected_lang_extensions;
+	ScriptServer::get_language(language_menu->get_selected())->get_recognized_extensions(&selected_lang_extensions);
+
 	for (const String &E : extensions) {
-		if (E.nocasecmp_to(extension) == 0) {
-			found = true;
-			if (E == ScriptServer::get_language(language_menu->get_selected())->get_extension()) {
-				match = true;
-			}
-			break;
-		}
+    	if (E.nocasecmp_to(extension) == 0) {
+        	found = true;
+        	// Check if extension is in the selected language's recognized extensions
+        	for (const String &lang_ext : selected_lang_extensions) {
+            	if (E == lang_ext) {
+               	 match = true;
+                	break;
+           	 }
+        }
+        break;
+    }
 	}
 
 	if (!found) {
