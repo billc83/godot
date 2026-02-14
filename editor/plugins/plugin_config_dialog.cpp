@@ -131,7 +131,7 @@ void PluginConfigDialog::_on_required_text_changed() {
 	if ((!script_edit->get_text().get_extension().is_empty() && script_edit->get_text().get_extension() != ext) || script_edit->get_text().ends_with(".")) {
 		validation_panel->set_message(MSG_ID_SCRIPT, vformat(TTR("Script extension must match chosen language extension (.%s)."), ext), EditorValidationPanel::MSG_ERROR);
 	}
-	if (language->get_name() == "GDScript") {
+	if (language->get_name() == "CobraScript") {
 		validation_panel->set_message(MSG_ID_ENABLE_WARNINGS, TTR("Consider enabling GDScript warnings for this plugin by adding an entry for it to the project setting Debug > GDScript > Warnings > Directory Rules."), EditorValidationPanel::MSG_INFO);
 	}
 }
@@ -290,7 +290,7 @@ PluginConfigDialog::PluginConfigDialog() {
 	for (int i = 0; i < ScriptServer::get_language_count(); i++) {
 		ScriptLanguage *lang = ScriptServer::get_language(i);
 		script_option_edit->add_item(lang->get_name());
-		if (lang->get_name() == "GDScript") {
+		if (lang->get_name() == "CobraScript") {
 			default_lang = i;
 		}
 	}

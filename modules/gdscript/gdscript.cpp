@@ -2324,7 +2324,7 @@ String GDScriptLanguage::get_type() const {
 }
 
 String GDScriptLanguage::get_extension() const {
-	return "gd";
+	return "cobra";
 }
 
 void GDScriptLanguage::finish() {
@@ -3069,7 +3069,7 @@ bool ResourceFormatLoaderGDScript::handles_type(const String &p_type) const {
 
 String ResourceFormatLoaderGDScript::get_resource_type(const String &p_path) const {
 	String el = p_path.get_extension().to_lower();
-	if (el == "gd" || el == "gdc") {
+	if (el == "gd" || el == "gdc" || el == "cobra") {
 		return "GDScript";
 	}
 	return "";

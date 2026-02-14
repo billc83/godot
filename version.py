@@ -1,5 +1,5 @@
-short_name = "godot"
-name = "Godot Engine"
+short_name = "Cobra2D"
+name = "Cobra2D Game Engine"
 major = 0
 minor = 1
 patch = 0

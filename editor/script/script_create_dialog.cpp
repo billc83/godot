@@ -115,11 +115,16 @@ void ScriptCreateDialog::_notification(int p_what) {
 		case NOTIFICATION_ENTER_TREE: {
 			String last_language = EditorSettings::get_singleton()->get_project_metadata("script_setup", "last_selected_language", "");
 			if (!last_language.is_empty()) {
+				bool found = false;
 				for (int i = 0; i < language_menu->get_item_count(); i++) {
 					if (language_menu->get_item_text(i) == last_language) {
 						language_menu->select(i);
+						found = true;
 						break;
 					}
+				}
+				if (!found && default_language >= 0) {
+					language_menu->select(default_language);
 				}
 			} else {
 				language_menu->select(default_language);
@@ -188,9 +193,10 @@ String ScriptCreateDialog::_adjust_file_path(const String &p_base_path) const {
 	String base_dir = p_base_path.get_base_dir();
 	String file_name = p_base_path.get_file().get_basename();
 	file_name = EditorNode::adjust_script_name_casing(file_name, language->preferred_file_name_casing());
-
+	String extension = language->get_extension();
 	// COBRA2D: default to .cobra for new scripts (gd still allowed manually)
-	String extension = "cobra";
+	
+	//String extension = "cobra";
 
 	return base_dir.path_join(file_name + "." + extension);
 }
@@ -234,9 +240,6 @@ bool ScriptCreateDialog::_validate_parent(const String &p_string) {
 }
 
 String ScriptCreateDialog::_validate_path(const String &p_path, bool p_file_must_exist, bool *r_path_valid) {
-	print_line("========== COBRA2D DEBUG START ==========");
-    print_line("Validating path: " + p_path);
-	
 	String p = p_path.strip_edges();
 	if (r_path_valid) {
 		*r_path_valid = false;
@@ -286,22 +289,19 @@ String ScriptCreateDialog::_validate_path(const String &p_path, bool p_file_must
 	String extension = p.get_extension();
 	List<String> extensions;
 
+	int lang_idx = language_menu->get_selected();
+	if (lang_idx < 0 || lang_idx >= ScriptServer::get_language_count()) {
+		lang_idx = (default_language >= 0) ? default_language : 0;
+	}
 	// Get all possible extensions for script.
 	for (int l = 0; l < language_menu->get_item_count(); l++) {
 		ScriptServer::get_language(l)->get_recognized_extensions(&extensions);
 	}
-	// COBRA2D DEBUG - Print what we got
-	print_line("COBRA2D DEBUG: Checking extension: " + extension);
-	print_line("COBRA2D DEBUG: All extensions count: " + itos(extensions.size()));
-	for (const String &E : extensions) {
-    	print_line("COBRA2D DEBUG: Found extension: " + E);
-	}
-
 	bool found = false;
 	bool match = false;
 	// COBRA2D Get the selected language's recognized extensions
 	List<String> selected_lang_extensions;
-	ScriptServer::get_language(language_menu->get_selected())->get_recognized_extensions(&selected_lang_extensions);
+	ScriptServer::get_language(lang_idx)->get_recognized_extensions(&selected_lang_extensions);
 
 	for (const String &E : extensions) {
     	if (E.nocasecmp_to(extension) == 0) {
@@ -325,7 +325,7 @@ String ScriptCreateDialog::_validate_path(const String &p_path, bool p_file_must
 	}
 
 	// Let ScriptLanguage do custom validation.
-	return ScriptServer::get_language(language_menu->get_selected())->validate_path(p);
+	return ScriptServer::get_language(lang_idx)->validate_path(p);
 }
 
 void ScriptCreateDialog::_parent_name_changed(const String &p_parent) {
@@ -396,7 +396,11 @@ void ScriptCreateDialog::_create_new() {
 	}
 
 	String class_name = file_path->get_text().get_file().get_basename();
-	scr = ScriptServer::get_language(language_menu->get_selected())->make_template(sinfo.content, class_name, parent_class);
+	int selected_lang = language_menu->get_selected();
+	if (selected_lang < 0 || selected_lang >= ScriptServer::get_language_count()) {
+		selected_lang = 0;
+	}
+	scr = ScriptServer::get_language(selected_lang)->make_template(sinfo.content, class_name, parent_class);
 
 	if (is_built_in) {
 		scr->set_name(built_in_name->get_text());
@@ -431,7 +435,12 @@ void ScriptCreateDialog::_load_exist() {
 }
 
 void ScriptCreateDialog::_language_changed(int l) {
+	if (l < 0 || l >= ScriptServer::get_language_count()) {
+		l = (default_language >= 0) ? default_language : 0;
+		language_menu->select(l);
+	}
 	language = ScriptServer::get_language(l);
+	ERR_FAIL_NULL(language);
 
 	can_inherit_from_file = language->can_inherit_from_file();
 	supports_built_in = language->supports_builtin_mode();
@@ -484,6 +493,9 @@ void ScriptCreateDialog::_browse_path(bool browse_parent, bool p_save) {
 	List<String> extensions;
 
 	int lang = language_menu->get_selected();
+	if (lang < 0 || lang >= ScriptServer::get_language_count()) {
+		lang = 0;
+	}
 	ScriptServer::get_language(lang)->get_recognized_extensions(&extensions);
 
 	for (const String &E : extensions) {
@@ -913,7 +925,7 @@ ScriptCreateDialog::ScriptCreateDialog() {
 	for (int i = 0; i < ScriptServer::get_language_count(); i++) {
 		String lang = ScriptServer::get_language(i)->get_name();
 		language_menu->add_item(lang);
-		if (lang == "GDScript") {
+		if (lang == "CobraScript") {
 			default_language = i;
 		}
 	}
