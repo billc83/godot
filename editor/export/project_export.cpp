@@ -1674,7 +1674,7 @@ ProjectExportDialog::ProjectExportDialog() {
 	patch_vb->add_margin_child(TTR("Base Packs:"), patches, true);
 
 	patch_dialog = memnew(EditorFileDialog);
-	patch_dialog->add_filter("*.pck", TTR("Godot Project Pack"));
+	patch_dialog->add_filter("*.pck", TTR("Cobra2D Project Pack"));
 	patch_dialog->set_access(EditorFileDialog::ACCESS_FILESYSTEM);
 	patch_dialog->set_file_mode(EditorFileDialog::FILE_MODE_OPEN_FILE);
 	patch_dialog->connect("file_selected", callable_mp(this, &ProjectExportDialog::_patch_file_selected));
@@ -1782,8 +1782,8 @@ ProjectExportDialog::ProjectExportDialog() {
 	script_vb->set_name(TTR("Scripts"));
 
 	script_mode = memnew(OptionButton);
-	script_mode->set_accessibility_name(TTRC("GDScript Export Mode:"));
-	script_vb->add_margin_child(TTR("GDScript Export Mode:"), script_mode);
+	script_mode->set_accessibility_name(TTRC("CobraScript Export Mode:"));
+	script_vb->add_margin_child(TTR("CobraScript Export Mode:"), script_mode);
 	script_mode->add_item(TTR("Text (easier debugging)"), (int)EditorExportPreset::MODE_SCRIPT_TEXT);
 	script_mode->add_item(TTR("Binary tokens (faster loading)"), (int)EditorExportPreset::MODE_SCRIPT_BINARY_TOKENS);
 	script_mode->add_item(TTR("Compressed binary tokens (smaller files)"), (int)EditorExportPreset::MODE_SCRIPT_BINARY_TOKENS_COMPRESSED);
@@ -1815,11 +1815,11 @@ ProjectExportDialog::ProjectExportDialog() {
 
 	set_cancel_button_text(TTR("Close"));
 	set_ok_button_text(TTR("Export PCK/ZIP..."));
-	get_ok_button()->set_tooltip_text(TTR("Export the project resources as a PCK or ZIP package. This is not a playable build, only the project data without a Godot executable."));
+	get_ok_button()->set_tooltip_text(TTR("Export the project resources as a PCK or ZIP package. This is not a playable build, only the project data without a Cobra2D executable."));
 	get_ok_button()->set_disabled(true);
 
 	export_button = add_button(TTR("Export Project..."), !DisplayServer::get_singleton()->get_swap_cancel_ok(), "export");
-	export_button->set_tooltip_text(TTR("Export the project as a playable build (Godot executable and project data) for the selected preset."));
+	export_button->set_tooltip_text(TTR("Export the project as a playable build (Cobra2D executable and project data) for the selected preset."));
 	export_button->connect(SceneStringName(pressed), callable_mp(this, &ProjectExportDialog::_export_project));
 	// Disable initially before we select a valid preset
 	export_button->set_disabled(true);
@@ -1839,7 +1839,7 @@ ProjectExportDialog::ProjectExportDialog() {
 
 	export_pck_zip = memnew(EditorFileDialog);
 	export_pck_zip->add_filter("*.zip", TTR("ZIP File"));
-	export_pck_zip->add_filter("*.pck", TTR("Godot Project Pack"));
+	export_pck_zip->add_filter("*.pck", TTR("Cobra2D Project Pack"));
 	export_pck_zip->set_access(EditorFileDialog::ACCESS_FILESYSTEM);
 	export_pck_zip->set_file_mode(EditorFileDialog::FILE_MODE_SAVE_FILE);
 	add_child(export_pck_zip);

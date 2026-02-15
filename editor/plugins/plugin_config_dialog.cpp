@@ -132,7 +132,7 @@ void PluginConfigDialog::_on_required_text_changed() {
 		validation_panel->set_message(MSG_ID_SCRIPT, vformat(TTR("Script extension must match chosen language extension (.%s)."), ext), EditorValidationPanel::MSG_ERROR);
 	}
 	if (language->get_name() == "CobraScript") {
-		validation_panel->set_message(MSG_ID_ENABLE_WARNINGS, TTR("Consider enabling GDScript warnings for this plugin by adding an entry for it to the project setting Debug > GDScript > Warnings > Directory Rules."), EditorValidationPanel::MSG_INFO);
+		validation_panel->set_message(MSG_ID_ENABLE_WARNINGS, TTR("Consider enabling CobraScript warnings for this plugin by adding an entry for it to the project setting Debug > CobraScript > Warnings > Directory Rules."), EditorValidationPanel::MSG_INFO);
 	}
 }
 

@@ -854,7 +854,7 @@ ShaderEditorPlugin::ShaderEditorPlugin() {
 	ED_SHORTCUT("shader_editor/copy_path", TTRC("Copy Shader Path"));
 
 	window_wrapper = memnew(WindowWrapper);
-	window_wrapper->set_window_title(vformat(TTR("%s - Godot Engine"), TTR("Shader Editor")));
+	window_wrapper->set_window_title(vformat(TTR("%s - Cobra2D"), TTR("Shader Editor")));
 	window_wrapper->set_margins_enabled(true);
 
 	main_container = memnew(VBoxContainer);
