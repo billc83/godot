@@ -30,6 +30,7 @@
 
 #include "file_access_encrypted.h"
 
+#include "core/crypto/security_token.h"  //SNAKEBYTE
 #include "core/variant/variant.h"
 
 CryptoCore::RandomGenerator *FileAccessEncrypted::_fae_static_rng = nullptr;
@@ -101,7 +102,10 @@ Error FileAccessEncrypted::open_and_parse(Ref<FileAccess> p_base, const Vector<u
 		{
 			CryptoCore::AESContext ctx;
 
-			ctx.set_encode_key(key.ptrw(), 256); // Due to the nature of CFB, same key schedule is used for both encryption and decryption!
+			//SNAKEBYTE: XOR key with embedded security token before AES
+			uint8_t snakebyte_key[32];
+			for (int i = 0; i < 32; i++) { snakebyte_key[i] = key[i] ^ COBRA_SECURITY_TOKEN[i]; }
+			ctx.set_encode_key(snakebyte_key, 256); // Due to the nature of CFB, same key schedule is used for both encryption and decryption!
 			ctx.decrypt_cfb(ds, iv.ptrw(), data.ptrw(), data.ptrw());
 		}
 
@@ -154,7 +158,10 @@ void FileAccessEncrypted::_close() {
 		memset(compressed.ptr() + data.size(), 0, len - data.size());
 
 		CryptoCore::AESContext ctx;
-		ctx.set_encode_key(key.ptrw(), 256);
+		//SNAKEBYTE: XOR key with embedded security token before AES
+		uint8_t snakebyte_key[32];
+		for (int i = 0; i < 32; i++) { snakebyte_key[i] = key[i] ^ COBRA_SECURITY_TOKEN[i]; }
+		ctx.set_encode_key(snakebyte_key, 256);
 
 		if (use_magic) {
 			file->store_32(ENCRYPTED_HEADER_MAGIC);
